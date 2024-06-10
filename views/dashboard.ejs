@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Praktikan</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl">
+      <h1 class="text-2xl font-bold mb-6 text-center">Dashboard Praktikan</h1>
+      <a
+        href="/praktikan/tambah"
+        class="mb-4 inline-block bg-indigo-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-indigo-600"
+      >
+        Tambah Data
+      </a>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+          <thead class="bg-gray-800 text-white">
+            <tr>
+              <th class="py-3 px-4 text-left">NPM</th>
+              <th class="py-3 px-4 text-left">NAMA</th>
+              <th class="py-3 px-4 text-left">KEHADIRAN</th>
+              <th class="py-3 px-4 text-left">LP</th>
+              <th class="py-3 px-4 text-left">LA</th>
+              <th class="py-3 px-4 text-left">UJIAN</th>
+              <th class="py-3 px-4 text-left">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700">
+            <% praktikan.forEach((p, index) => { %>
+            <tr
+              class="<%= index % 2 === 0 ? 'bg-gray-100' : 'bg-white' %>"
+              id="praktikan-<%= p.npm %>"
+            >
+              <td class="border px-4 py-2"><%= p.npm %></td>
+              <td class="border px-4 py-2"><%= p.nama %></td>
+              <td class="border px-4 py-2"><%= p.kehadiran %></td>
+              <td class="border px-4 py-2"><%= p.lp %></td>
+              <td class="border px-4 py-2"><%= p.la %></td>
+              <td class="border px-4 py-2"><%= p.ujian %></td>
+              <td class="border px-4 py-2">
+                <a
+                  href="/praktikan/<%= p.npm %>/edit"
+                  class="text-indigo-600 hover:text-indigo-900"
+                  >Edit</a
+                >
+
+                <button
+                  onclick="deletePraktikan('<%= p.npm %>')"
+                  class="text-red-600 hover:text-red-900"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <form action="/auth/logout" method="POST" class="mt-6">
+        <button
+          type="submit"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Logout
+        </button>
+      </form>
+    </div>
+    <script>
+      function deletePraktikan(npm) {
+        fetch(`/praktikan/${npm}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.getElementById(`praktikan-${npm}`).remove();
+            alert(data.message);
+          })
+          .catch((error) => {
+            alert("There was a problem with the request.");
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
